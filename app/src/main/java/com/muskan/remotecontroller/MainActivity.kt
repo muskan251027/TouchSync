@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -51,6 +53,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Define a custom shape for the buttons
+val customButtonShape = RoundedCornerShape(
+    topStart = CornerSize(0.dp),
+    topEnd = CornerSize(0.dp),
+    bottomStart = CornerSize(0.dp),
+    bottomEnd = CornerSize(0.dp)
+)
+
 
 @Composable
 fun MyApp() {
@@ -62,23 +72,33 @@ fun MyApp() {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = { shortcuts() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier
+                    .height(50.dp) // Fixed height for all buttons
+                    .weight(1f), // Fill available space
+                shape = customButtonShape // Apply custom shape
             ) {
                 Text("Shortcuts")
             }
             Button(
                 onClick = { },
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)
+                modifier = Modifier
+                    .height(50.dp) // Fixed height for all buttons
+                    .weight(1f), // Fill available space
+                shape = customButtonShape // Apply custom shape
             ) {
                 Text("Screenshot")
             }
             Button(
                 onClick = { showKeyboard(context) },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier
+                    .height(50.dp) // Fixed height for all buttons
+                    .weight(1f), // Fill available space
+                shape = customButtonShape // Apply custom shape
             ) {
                 Text("Open Keyboard")
             }
@@ -133,30 +153,41 @@ fun MyApp() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
                     onClick = { leftClick() },
-                    modifier = Modifier.size(width = 200.dp, height = 50.dp)
+                    modifier = Modifier
+                        .height(50.dp) // Fixed height for all buttons
+                        .weight(1f), // Fill available space
+                    shape = customButtonShape // Apply custom shape
                 ) {
                     Text("Left Click")
                 }
                 Button(
                     onClick = { },
-                    modifier = Modifier.size(width = 80.dp, height = 150.dp)
+                    modifier = Modifier
+                        .height(50.dp) // Fixed height for all buttons
+                        .weight(1f), // Fill available space
+                    shape = customButtonShape // Apply custom shape
                 ) {
                     Text("Scroll")
                 }
                 Button(
                     onClick = { rightClick() },
-                    modifier = Modifier.size(width = 200.dp, height = 50.dp)
+                    modifier = Modifier
+                        .height(50.dp) // Fixed height for all buttons
+                        .weight(1f), // Fill available space
+                    shape = customButtonShape // Apply custom shape
                 ) {
-                    Text("Right Click")
+                    Text("Right click")
                 }
+
+
             }
         }
 
