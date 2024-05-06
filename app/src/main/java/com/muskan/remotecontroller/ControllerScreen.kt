@@ -1,31 +1,28 @@
 package com.muskan.remotecontroller
 
 import android.app.Activity
-import androidx.compose.foundation.Image
 import android.content.Context
+import android.graphics.Rect
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,47 +30,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.Socket
+
 
 // Define a custom shape for the buttons
 val customButtonShape = RoundedCornerShape(
@@ -83,6 +70,7 @@ val customButtonShape = RoundedCornerShape(
     bottomEnd = CornerSize(0.dp)
 )
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SecondScreen(navController: NavHostController, text: String) {
 
@@ -90,7 +78,9 @@ fun SecondScreen(navController: NavHostController, text: String) {
     val focusManager = LocalFocusManager.current
     var isPopupVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+    var confirmBackDialog by remember { mutableStateOf(false) }
     var screenshotFileName by remember { mutableStateOf<String?>(null) }
+    var editTextVal: String
 
     val ipAddress = text.trim()
 
@@ -103,9 +93,12 @@ fun SecondScreen(navController: NavHostController, text: String) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { navController.navigate("main_screen") },
+                onClick = {
+                    confirmBackDialog = true
+                          },
                 modifier = Modifier
-                    .height(70.dp).weight(0.5f), // Fill available space
+                    .height(70.dp)
+                    .weight(0.5f), // Fill available space
                 shape = customButtonShape,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF002147))
             ) {
@@ -114,10 +107,35 @@ fun SecondScreen(navController: NavHostController, text: String) {
                     contentDescription = null, // Adjust padding as needed
                 )
             }
+            if (confirmBackDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        confirmBackDialog = false
+                    },
+                    title = {
+                        Text("Are you sure you want to exit?")
+                    },
+                    text = {
+                        Text("")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                confirmBackDialog = false
+                                navController.navigate("main_screen")
+                            }
+                        ) {
+                            Text("YES")
+                        }
+                    }
+                )
+            }
+
             Button(
                 onClick = { showDialog = true },
                 modifier = Modifier
-                    .height(70.dp).weight(0.5f), // Fill available space
+                    .height(70.dp)
+                    .weight(0.5f), // Fill available space
                 shape = customButtonShape,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF002147))
             ) {
@@ -155,7 +173,9 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                     // Add your button click action here
                                     desktop(ipAddress)
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
                             ) {
                                 Text("Desktop", modifier = Modifier.padding(10.dp))
@@ -167,7 +187,9 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                     // Add your button click action here
                                     terminal(ipAddress)
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
                             ) {
                                 Text("Terminal", modifier = Modifier.padding(10.dp))
@@ -179,7 +201,9 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                     // Add your button click action here
                                     notes(ipAddress)
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
                             ) {
                                 Text("Notes", modifier = Modifier.padding(10.dp))
@@ -191,7 +215,9 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                     // Add your button click action here
                                     calculator(ipAddress)
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
                             ) {
                                 Text("Calculator", modifier = Modifier.padding(10.dp))
@@ -214,7 +240,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
                     }
                 },
                 modifier = Modifier
-                    .height(70.dp).weight(0.5f), // Fill available space
+                    .height(70.dp)
+                    .weight(0.5f), // Fill available space
                 shape = customButtonShape,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF002147))
             ) {
@@ -283,24 +310,24 @@ fun SecondScreen(navController: NavHostController, text: String) {
                 ipAddress
             )
         }
-        Box(
-            modifier = Modifier
-                //.weight(1f)
-                .height(100.dp) // Set the height to be small
-                .background(Color.Transparent),
-            //.aspectRatio(1f),
-            contentAlignment = Alignment.Center
-
-        ) {
-            TouchView2(
-                onTap = {
-                },
-                onDoubleTap = {
-                    Log.d("onDoubleTap", "onDoubleTap")
-                },
-                ipAddress,
-            )
-        }
+//        Box(
+//            modifier = Modifier
+//                //.weight(1f)
+//                .height(100.dp) // Set the height to be small
+//                .background(Color.Transparent),
+//            //.aspectRatio(1f),
+//            contentAlignment = Alignment.Center
+//
+//        ) {
+//            TouchView2(
+//                onTap = {
+//                },
+//                onDoubleTap = {
+//                    Log.d("onDoubleTap", "onDoubleTap")
+//                },
+//                ipAddress,
+//            )
+//        }
 
         Box(
             modifier = Modifier
@@ -319,7 +346,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         .weight(1f)
                         .fillMaxHeight(),
                     shape = customButtonShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6d9bc3))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6))
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.left_click), // Replace "your_image" with your image resource
@@ -340,7 +367,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             .height(IntrinsicSize.Max)
                             .weight(1f),
                         shape = customButtonShape,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF000036))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF100c08))
                     ) {
                         Text("Scroll Up")
                     }
@@ -351,7 +378,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             .height(IntrinsicSize.Max)
                             .weight(1f),
                         shape = customButtonShape,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF000036))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF100c08))
                     ) {
                         Text("Scroll Down")
                     }
@@ -364,7 +391,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         .weight(1f)
                         .fillMaxHeight(),
                     shape = customButtonShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6d9bc3))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6))
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.right_click), // Replace "your_image" with your image resource
@@ -440,11 +467,30 @@ fun TouchView(onTouch: (x: Float, y: Float) -> Unit, ipAddress: String) {
                     sendCoordinatesToServer(dragAmount.x, dragAmount.y, ipAddress)
                 }
             }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+
+                        Log.d("onDoubleTap", "onDoubleTap")
+
+                        doubleTap(ipAddress)
+                    },
+                    onTap = {
+
+                        Log.d("onTap", "onTap")
+                        Tap(ipAddress)
+
+                    }
+                )
+            }
     ) {
         Image(
             painter = painterResource(id = R.drawable.mouse_icon),
             contentDescription = null,
-            modifier = Modifier.align(Alignment.BottomEnd).size(100.dp).padding(20.dp)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .size(100.dp)
+                .padding(20.dp)
         )
     }
 }
@@ -559,31 +605,52 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
 
     // Set up a TextWatcher to listen for text changes
     val textWatcher = object : TextWatcher {
+
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             // Not used
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             // Log the changed text
-            Log.d("Text Changed", s.toString()) // entire string
-            Log.d("Text Changed", s?.lastOrNull().toString()) // last character
+            Log.d("Text Changed1", s.toString()) // entire string
+            Log.d("Text Changed2", s?.lastOrNull().toString()) // last character
             var unicodeval = s?.lastOrNull()?.toInt()?.toString(16)?.toUpperCase() // unicode
-            Log.d("Text Changed", "\\u$unicodeval")
-            Log.d("Text Changed", s?.lastOrNull()?.toInt().toString())
+            Log.d("Text Changed3", "\\u$unicodeval")
+            Log.d("Text Changed4", s?.lastOrNull()?.toInt().toString())
 
-            GlobalScope.launch(Dispatchers.IO) {
-                val ipAddress = ipAddress
-                val port = 1234
-                try {
-                    val socket = Socket(ipAddress, port)
-                    val outToServer = DataOutputStream(socket.getOutputStream())
-                    outToServer.writeUTF("6")
-                    outToServer.writeUTF(s?.lastOrNull().toString())
-                    socket.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
+            if (before > count) {
+                // Backspace pressed
+                Log.d("Text Changed5", "Backspace pressed")
+                GlobalScope.launch(Dispatchers.IO) {
+                    val ipAddress = ipAddress
+                    val port = 1234
+                    try {
+                        val socket = Socket(ipAddress, port)
+                        val outToServer = DataOutputStream(socket.getOutputStream())
+                        outToServer.writeUTF("6")
+                        outToServer.writeUTF("backspace")
+                        socket.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
+            else {
+                GlobalScope.launch(Dispatchers.IO) {
+                    val ipAddress = ipAddress
+                    val port = 1234
+                    try {
+                        val socket = Socket(ipAddress, port)
+                        val outToServer = DataOutputStream(socket.getOutputStream())
+                        outToServer.writeUTF("6")
+                        outToServer.writeUTF(s?.lastOrNull().toString())
+                        socket.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
         }
 
         override fun afterTextChanged(s: Editable?) {

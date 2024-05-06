@@ -173,7 +173,6 @@ fun HeaderText() {
     )
 }
 
-
 fun connect(navController: NavHostController, context: android.content.Context, currentTextFieldValue: String) {
     GlobalScope.launch(Dispatchers.IO) {
         val ipAddress = currentTextFieldValue.trim()
