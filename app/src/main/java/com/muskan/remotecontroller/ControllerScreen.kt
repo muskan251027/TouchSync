@@ -2,13 +2,11 @@ package com.muskan.remotecontroller
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Rect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -47,7 +45,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -75,12 +72,13 @@ val customButtonShape = RoundedCornerShape(
 fun SecondScreen(navController: NavHostController, text: String) {
 
     val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
-    var isPopupVisible by remember { mutableStateOf(false) }
+    //val focusManager = LocalFocusManager.current
+    //var isPopupVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     var confirmBackDialog by remember { mutableStateOf(false) }
     var screenshotFileName by remember { mutableStateOf<String?>(null) }
-    var editTextVal: String
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    //var editTextVal: String
 
     val ipAddress = text.trim()
 
@@ -94,6 +92,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
         ) {
             Button(
                 onClick = {
+                    provideVibration(vibrator)
                     confirmBackDialog = true
                           },
                 modifier = Modifier
@@ -132,7 +131,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
             }
 
             Button(
-                onClick = { showDialog = true },
+                onClick = { provideVibration(vibrator)
+                    showDialog = true },
                 modifier = Modifier
                     .height(70.dp)
                     .weight(0.5f), // Fill available space
@@ -171,6 +171,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             Button(
                                 onClick = {
                                     // Add your button click action here
+                                    provideVibration(vibrator)
                                     desktop(ipAddress)
                                 },
                                 modifier = Modifier
@@ -185,6 +186,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             Button(
                                 onClick = {
                                     // Add your button click action here
+                                    provideVibration(vibrator)
                                     terminal(ipAddress)
                                 },
                                 modifier = Modifier
@@ -199,6 +201,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             Button(
                                 onClick = {
                                     // Add your button click action here
+                                    provideVibration(vibrator)
                                     notes(ipAddress)
                                 },
                                 modifier = Modifier
@@ -213,6 +216,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                             Button(
                                 onClick = {
                                     // Add your button click action here
+                                    provideVibration(vibrator)
                                     calculator(ipAddress)
                                 },
                                 modifier = Modifier
@@ -232,6 +236,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
 
             Button(
                 onClick = {
+                    provideVibration(vibrator)
                     GlobalScope.launch {
                         val fileName = screenshot(ipAddress)
                         if (fileName != null) {
@@ -278,7 +283,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
             }
 
             Button(
-                onClick = { showKeyboard(context, ipAddress) },
+                onClick = { provideVibration(vibrator)
+                    showKeyboard(context, ipAddress, vibrator) },
                 modifier = Modifier
                     .height(70.dp) // Fixed height for all buttons
                     .weight(1f), // Fill available space
@@ -303,7 +309,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
         ) {
             TouchView(
                 onTouch = { deltaX, deltaY ->
-                    println("DeltaX: $deltaX, DeltaY: $deltaY")
+                    //println("DeltaX: $deltaX, DeltaY: $deltaY")
                     // Send the coordinates to the server
                     sendCoordinatesToServer(deltaX, deltaY, ipAddress)
                 },
@@ -341,7 +347,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
             ) {
                 // Left click button
                 Button(
-                    onClick = { leftClick(ipAddress) },
+                    onClick = { provideVibration(vibrator)
+                        leftClick(ipAddress) },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -361,7 +368,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         .fillMaxHeight(),
                 ) {
                     Button(
-                        onClick = { scrollUp(ipAddress) },
+                        onClick = { provideVibration(vibrator)
+                            scrollUp(ipAddress) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(IntrinsicSize.Max)
@@ -372,7 +380,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         Text("Scroll Up")
                     }
                     Button(
-                        onClick = { scrollDown(ipAddress) },
+                        onClick = { provideVibration(vibrator)
+                            scrollDown(ipAddress) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(IntrinsicSize.Max)
@@ -386,7 +395,8 @@ fun SecondScreen(navController: NavHostController, text: String) {
 
                 // Right click button
                 Button(
-                    onClick = { rightClick(ipAddress) },
+                    onClick = { provideVibration(vibrator)
+                        rightClick(ipAddress) },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -405,7 +415,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
     }
 }
 
-@Composable
+/*@Composable
 fun TouchView2(onTap: () -> Unit, onDoubleTap: () -> Int, ipAddress: String) {
     var doubleTapCount by remember { mutableStateOf(0) }
     Box(
@@ -434,6 +444,7 @@ fun TouchView2(onTap: () -> Unit, onDoubleTap: () -> Int, ipAddress: String) {
                         Tap(ipAddress)
 
                     }
+
                 )
             }) {
         Text(
@@ -441,12 +452,17 @@ fun TouchView2(onTap: () -> Unit, onDoubleTap: () -> Int, ipAddress: String) {
             modifier = Modifier.align(Alignment.Center)
         )
     }
-}
+}*/
 
 @Composable
 fun TouchView(onTouch: (x: Float, y: Float) -> Unit, ipAddress: String) {
     //val doubleTapCount = remember { mutableStateOf(0) }
+    var gestureResult by remember { mutableStateOf("No gesture detected") }
     var doubleTapCount by remember { mutableStateOf(0) }
+    val context = LocalContext.current
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+
 
     Box(
         modifier = Modifier
@@ -462,26 +478,64 @@ fun TouchView(onTouch: (x: Float, y: Float) -> Unit, ipAddress: String) {
             )
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
+
                     onTouch(dragAmount.x, dragAmount.y)
-                    Log.d("TouchView", "DeltaX: ${dragAmount.x}, DeltaY: ${dragAmount.y}")
+                    //Log.d("TouchView", "DeltaX: ${dragAmount.x}, DeltaY: ${dragAmount.y}")
                     sendCoordinatesToServer(dragAmount.x, dragAmount.y, ipAddress)
                 }
             }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-
-                        Log.d("onDoubleTap", "onDoubleTap")
-
+                        provideVibration(vibrator)
+                        provideVibration(vibrator)
+                        //Log.d("onDoubleTap", "onDoubleTap")
                         doubleTap(ipAddress)
                     },
                     onTap = {
-
-                        Log.d("onTap", "onTap")
+                        provideVibration(vibrator)
+                        //Log.d("onTap", "onTap")
                         Tap(ipAddress)
 
+                    },
+                    onLongPress = {
+                        //Log.d("onLongPress", "onLongPress")
+                        // Handle long press event here
+                        provideVibrationLong(vibrator)
+                        longPress(ipAddress)
                     }
+
                 )
+            }
+
+            .pointerInput(Unit) {
+                // Handle multi-touch gestures
+                awaitPointerEventScope {
+                    while (true) {
+                        // Await pointer event
+                        val event = awaitPointerEvent()
+
+                        // Get the list of pointer changes
+                        val pointers = event.changes
+
+                        // Count the number of active pointers (fingers)
+                        val activePointersCount = pointers.count { it.pressed }
+
+                        // Handle different multi-touch gestures
+                        when (activePointersCount) {
+                            // Two-finger touch
+                            2 -> {
+                                provideVibrationLong(vibrator)
+                                gestureResult = "Two-finger touch detected!"
+                                //Log.d("MultiFingerGestureView", "Two-finger touch detected!")
+                                // Perform your desired action here for two-finger touch
+
+                                twoFingerTouch(ipAddress)
+                            }
+
+                        }
+                    }
+                }
             }
     ) {
         Image(
@@ -539,6 +593,73 @@ fun doubleTap(ipAddress: String) {
 
 }
 
+fun longPress(ipAddress: String) {
+    //Log.d("Inside Function longPress", "Inside Function longPress")
+    val ipAddress = ipAddress // Replace with your server's IP address
+    val port = 1234 // Replace with your server's port number
+    GlobalScope.launch(Dispatchers.IO) {
+        try {
+            val socket = Socket(ipAddress, port)
+            val outToServer = DataOutputStream(socket.getOutputStream())
+            //val dataToSend = "$x,$y,$otherData"
+            // Send the x and y coordinates to the server
+            //outToServer.writeUTF(dataToSend)
+
+            outToServer.writeUTF("15");
+            // Close the socket
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle the exception appropriately
+        }
+    }
+
+}
+fun twoFingerTouch(ipAddress: String) {
+    //Log.d("Inside Function twoFingerTouch", "Inside Function twoFingerTouch")
+    val ipAddress = ipAddress // Replace with your server's IP address
+    val port = 1234 // Replace with your server's port number
+    GlobalScope.launch(Dispatchers.IO) {
+        try {
+            val socket = Socket(ipAddress, port)
+            val outToServer = DataOutputStream(socket.getOutputStream())
+            //val dataToSend = "$x,$y,$otherData"
+            // Send the x and y coordinates to the server
+            //outToServer.writeUTF(dataToSend)
+
+            outToServer.writeUTF("16");
+            // Close the socket
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle the exception appropriately
+        }
+    }
+
+}
+fun provideVibration(vibrator: Vibrator) {
+    // Vibration duration in milliseconds
+    val duration = 50L // Adjust this value as needed
+
+    // Check if the device has a vibrator
+    if (vibrator.hasVibrator()) {
+        // Trigger the vibration
+        vibrator.vibrate(duration)
+    } else {
+        Log.d("VibrationOnTouchView", "Device does not have a vibrator")
+    }
+}
+fun provideVibrationLong(vibrator: Vibrator) {
+    // Vibration duration in milliseconds
+    val duration = 200L // Adjust this value as needed
+
+    // Check if the device has a vibrator
+    if (vibrator.hasVibrator()) {
+        // Trigger the vibration
+        vibrator.vibrate(duration)
+    } else {
+        Log.d("VibrationOnTouchView", "Device does not have a vibrator")
+    }
+}
+
 fun sendCoordinatesToServer(x: Float, y: Float, ipAddress: String) {
     val ipAddress = ipAddress // Replace with your server's IP address
     val port = 1234 // Replace with your server's port number
@@ -592,9 +713,10 @@ fun rightClick(ipAddress: String) {
     }
 }
 
-private fun showKeyboard(context: android.content.Context, ipAddress: String) {
+private fun showKeyboard(context: android.content.Context, ipAddress: String, vibrator: Vibrator) {
     // Create an EditText to capture key events
     val editText = EditText(context)
+    //Log.d("Hey","hey")
 
     // Set the width and height to 0 to hide the text on the screen
     editText.layoutParams = ViewGroup.LayoutParams(0, 0)
@@ -608,19 +730,33 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             // Not used
+
+
+
+
+
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             // Log the changed text
-            Log.d("Text Changed1", s.toString()) // entire string
-            Log.d("Text Changed2", s?.lastOrNull().toString()) // last character
+
+            /*Log.d("On s", s.toString())
+            Log.d("On s Length", s?.length.toString())
+            Log.d("On start", start.toString())
+            Log.d("On before", before.toString())
+            Log.d("On count", count.toString())*/
+
+
+           // Log.d("Text Changed1", s.toString()) // entire string
+            //Log.d("Text Changed2", s?.lastOrNull().toString()) // last character
             var unicodeval = s?.lastOrNull()?.toInt()?.toString(16)?.toUpperCase() // unicode
-            Log.d("Text Changed3", "\\u$unicodeval")
-            Log.d("Text Changed4", s?.lastOrNull()?.toInt().toString())
+            //Log.d("Text Changed3", "\\u$unicodeval")
+            //Log.d("Text Changed4", s?.lastOrNull()?.toInt().toString())
 
             if (before > count) {
+                provideVibration(vibrator)
                 // Backspace pressed
-                Log.d("Text Changed5", "Backspace pressed")
+                //Log.d("Text Changed5", "Backspace pressed")
                 GlobalScope.launch(Dispatchers.IO) {
                     val ipAddress = ipAddress
                     val port = 1234
@@ -634,9 +770,13 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
                         e.printStackTrace()
                     }
                 }
+
+
+
             }
             else {
                 GlobalScope.launch(Dispatchers.IO) {
+                    provideVibration(vibrator)
                     val ipAddress = ipAddress
                     val port = 1234
                     try {
@@ -654,7 +794,16 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
         }
 
         override fun afterTextChanged(s: Editable?) {
-            // Not used
+
+            if (s.isNullOrEmpty()) {
+                // Handle empty string case
+                //editText.requestFocus()  // Ensure focus remains on the EditText
+
+                // Send backspace to server
+                //sendBackspaceToServer(ipAddress)
+            }
+
+
         }
     }
 
@@ -662,6 +811,16 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
 
     // Request focus for the EditText to show the keyboard
     editText.requestFocus()
+    /*editText.setOnKeyListener { _, keyCode, event ->
+        //Log.d("Key Event", "KeyCode: $keyCode, Action: ${event.action}")
+        if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
+            // Backspace key was pressed
+            sendBackspaceToServer(ipAddress)
+            true
+        } else {
+            false
+        }
+    }*/
 
     // Open the keyboard
     val inputMethodManager =
@@ -669,7 +828,7 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String) {
     inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_FORCED)
 
     // Capture key events
-    Log.d("showKeyboard", "showKeyboard")
+    //Log.d("showKeyboard", "showKeyboard")
 }
 
 suspend fun screenshot(ipAddress: String): String? {
@@ -785,6 +944,21 @@ fun calculator(ipAddress: String) {
             val socket = Socket(ipAddress, port)
             val outToServer = DataOutputStream(socket.getOutputStream())
             outToServer.writeUTF("13")
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+
+private fun sendBackspaceToServer(ipAddress: String) {
+    GlobalScope.launch(Dispatchers.IO) {
+        val port = 1234
+        try {
+            val socket = Socket(ipAddress, port)
+            val outToServer = DataOutputStream(socket.getOutputStream())
+            outToServer.writeUTF("6")
+            outToServer.writeUTF("backspace")
             socket.close()
         } catch (e: Exception) {
             e.printStackTrace()
