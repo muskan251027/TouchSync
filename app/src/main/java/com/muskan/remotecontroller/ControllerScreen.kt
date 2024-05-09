@@ -767,64 +767,78 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
 
                 isModifyingText = true;
 
-
-                // Backspace pressed
-                //Log.d("Text Changed5", "Backspace pressed")
-                GlobalScope.launch(Dispatchers.IO) {
-                    val ipAddress = ipAddress
-                    val port = 1234
-                    try {
-                        val socket = Socket(ipAddress, port)
-                        val outToServer = DataOutputStream(socket.getOutputStream())
-                        outToServer.writeUTF("6")
-                        outToServer.writeUTF("backspace")
-                        socket.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-
-
-                val editable = editText.text
-                if (editable != null) {
-                    // Replace or set text safely
-                    val newText = "😅"
-                    editText.post {
-                        // Temporarily remove the TextWatcher to avoid loops
-                        editText.removeTextChangedListener(this)
-
-                        // Ensure we don't exceed the bounds of the existing text
-                        if (s?.length ?: 0 >= 1) {
-                            if (s != null) {
-                                editable.replace(0, s.length, newText)
-                            }
-                        } else {
-                            editable.clear()
-                            editable.append(newText)
+if (before == 1) {
+    // Backspace pressed
+    //Log.d("Text Changed5", "Backspace pressed")
+    GlobalScope.launch(Dispatchers.IO) {
+        val ipAddress = ipAddress
+        val port = 1234
+        try {
+            val socket = Socket(ipAddress, port)
+            val outToServer = DataOutputStream(socket.getOutputStream())
+            outToServer.writeUTF("6")
+            outToServer.writeUTF("backspace")
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+                if (before == 2) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val ipAddress = ipAddress
+                        val port = 1234
+                        try {
+                            val socket = Socket(ipAddress, port)
+                            val outToServer = DataOutputStream(socket.getOutputStream())
+                            outToServer.writeUTF("6")
+                            outToServer.writeUTF("backspace")
+                            socket.close()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-
-                        // Re-add the TextWatcher
-                        editText.addTextChangedListener(this)
                     }
-                }
 
+                    val editable = editText.text
+                    if (editable != null) {
+                        // Replace or set text safely
+                        val newText = "😅"
+                        editText.post {
+                            // Temporarily remove the TextWatcher to avoid loops
+                            editText.removeTextChangedListener(this)
 
+                            // Ensure we don't exceed the bounds of the existing text
+                            if (s?.length ?: 0 >= 1) {
+                                if (s != null) {
+                                    editable.replace(0, s.length, newText)
+                                }
+                            } else {
+                                editable.clear()
+                                editable.append(newText)
+                            }
 
-                GlobalScope.launch(Dispatchers.IO) {
-                    val ipAddress = ipAddress
-                    val port = 1234
-                    try {
-                        val socket = Socket(ipAddress, port)
-                        val outToServer = DataOutputStream(socket.getOutputStream())
-                        outToServer.writeUTF("6")
-                        outToServer.writeUTF(s?.lastOrNull().toString())
-                        socket.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                            // Re-add the TextWatcher
+                            editText.addTextChangedListener(this)
+                        }
                     }
+
+
+
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val ipAddress = ipAddress
+                        val port = 1234
+                        try {
+                            val socket = Socket(ipAddress, port)
+                            val outToServer = DataOutputStream(socket.getOutputStream())
+                            outToServer.writeUTF("6")
+                            outToServer.writeUTF(s?.lastOrNull().toString())
+                            socket.close()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
                 }
-
-
             }else {
 
                 //isModifyingText = true
