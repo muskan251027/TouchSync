@@ -715,6 +715,7 @@ fun rightClick(ipAddress: String) {
 
 private fun showKeyboard(context: android.content.Context, ipAddress: String, vibrator: Vibrator) {
     // Create an EditText to capture key events
+    var isModifyingText = false
     val editText = EditText(context)
     //Log.d("Hey","hey")
 
@@ -730,6 +731,13 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             // Not used
+            /*Log.d("before s", s.toString())
+            Log.d("before s Length", s?.length.toString())
+            Log.d("before start", start.toString())
+            Log.d("before after", after.toString())
+            Log.d("before count", count.toString())*/
+
+
 
 
 
@@ -740,11 +748,12 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             // Log the changed text
 
-            /*Log.d("On s", s.toString())
+            Log.d("On s", s.toString())
             Log.d("On s Length", s?.length.toString())
             Log.d("On start", start.toString())
             Log.d("On before", before.toString())
-            Log.d("On count", count.toString())*/
+            Log.d("On count", count.toString())
+
 
 
            // Log.d("Text Changed1", s.toString()) // entire string
@@ -755,6 +764,10 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
 
             if (before > count) {
                 provideVibration(vibrator)
+
+                isModifyingText = true;
+
+
                 // Backspace pressed
                 //Log.d("Text Changed5", "Backspace pressed")
                 GlobalScope.launch(Dispatchers.IO) {
@@ -772,9 +785,49 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
                 }
 
 
+                val editable = editText.text
+                if (editable != null) {
+                    // Replace or set text safely
+                    val newText = "😅"
+                    editText.post {
+                        // Temporarily remove the TextWatcher to avoid loops
+                        editText.removeTextChangedListener(this)
 
-            }
-            else {
+                        // Ensure we don't exceed the bounds of the existing text
+                        if (s?.length ?: 0 >= 1) {
+                            if (s != null) {
+                                editable.replace(0, s.length, newText)
+                            }
+                        } else {
+                            editable.clear()
+                            editable.append(newText)
+                        }
+
+                        // Re-add the TextWatcher
+                        editText.addTextChangedListener(this)
+                    }
+                }
+
+
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    val ipAddress = ipAddress
+                    val port = 1234
+                    try {
+                        val socket = Socket(ipAddress, port)
+                        val outToServer = DataOutputStream(socket.getOutputStream())
+                        outToServer.writeUTF("6")
+                        outToServer.writeUTF(s?.lastOrNull().toString())
+                        socket.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+
+            }else {
+
+                //isModifyingText = true
                 GlobalScope.launch(Dispatchers.IO) {
                     provideVibration(vibrator)
                     val ipAddress = ipAddress
@@ -789,19 +842,28 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
                         e.printStackTrace()
                     }
                 }
+
+
+
             }
 
         }
 
         override fun afterTextChanged(s: Editable?) {
 
-            if (s.isNullOrEmpty()) {
-                // Handle empty string case
-                //editText.requestFocus()  // Ensure focus remains on the EditText
+            //Log.d("afterTextChanged", s.toString())
+            //Log.d("isModifyingText", isModifyingText.toString())
 
-                // Send backspace to server
-                //sendBackspaceToServer(ipAddress)
-            }
+
+            /*if (isModifyingText == true) {
+                editText.removeTextChangedListener(this)
+
+                sendBackspaceToServer(ipAddress, editText, s)
+                isModifyingText = false
+                editText.addTextChangedListener(this)
+
+            }*/
+
 
 
         }
@@ -811,16 +873,13 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
 
     // Request focus for the EditText to show the keyboard
     editText.requestFocus()
-    /*editText.setOnKeyListener { _, keyCode, event ->
-        //Log.d("Key Event", "KeyCode: $keyCode, Action: ${event.action}")
-        if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
-            // Backspace key was pressed
-            sendBackspaceToServer(ipAddress)
-            true
-        } else {
-            false
-        }
-    }*/
+    val editable = editText.text
+    if (editable is Editable) {
+        // For demonstration, append a string to the text
+        editable.append("😅")
+    }
+
+
 
     // Open the keyboard
     val inputMethodManager =
@@ -951,8 +1010,8 @@ fun calculator(ipAddress: String) {
     }
 }
 
-private fun sendBackspaceToServer(ipAddress: String) {
-    GlobalScope.launch(Dispatchers.IO) {
+private fun sendBackspaceToServer(ipAddress: String, editText: EditText, s: Editable?) {
+    /*GlobalScope.launch(Dispatchers.IO) {
         val port = 1234
         try {
             val socket = Socket(ipAddress, port)
@@ -963,6 +1022,26 @@ private fun sendBackspaceToServer(ipAddress: String) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }*/
+    val editable = editText.text
+    if (editable is Editable) {
+        // For demonstration, append a string to the text
+        editable.append("😅")
     }
+
+    GlobalScope.launch(Dispatchers.IO) {
+        val ipAddress = ipAddress
+        val port = 1234
+        try {
+            val socket = Socket(ipAddress, port)
+            val outToServer = DataOutputStream(socket.getOutputStream())
+            outToServer.writeUTF("6")
+            outToServer.writeUTF(s?.lastOrNull().toString())
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }
 
