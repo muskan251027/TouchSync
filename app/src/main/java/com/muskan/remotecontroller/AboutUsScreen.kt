@@ -87,7 +87,10 @@ fun AboutUsScreen(navController: NavHostController) {
         ) {
             Text(
                 text = "Start",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
                 modifier = Modifier.padding(vertical = 30.dp, horizontal = 20.dp)
             )
         }
@@ -104,14 +107,21 @@ fun HeadingText() {
         ),
         color = Color(0xFFF79256),
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(top = 16.dp, bottom = 0.dp).padding(horizontal = 15.dp)
+        modifier = Modifier
+            .padding(top = 16.dp, bottom = 0.dp)
+            .padding(horizontal = 15.dp)
     )
     Text(
         text = "BRIDGING DEVICES.\"",
-        style = MaterialTheme.typography.displayLarge.copy(fontSize = 60.sp, letterSpacing = 0.1.em,),
+        style = MaterialTheme.typography.displayLarge.copy(
+            fontSize = 60.sp,
+            letterSpacing = 0.1.em,
+        ),
         color = Color(0xFFFBD1A2),
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(top = 0.dp, bottom = 20.dp).padding(horizontal = 15.dp)
+        modifier = Modifier
+            .padding(top = 0.dp, bottom = 20.dp)
+            .padding(horizontal = 15.dp)
     )
 }
 

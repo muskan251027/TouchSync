@@ -100,7 +100,10 @@ fun MainScreen(navController: NavHostController) {
                         .padding(horizontal = 10.dp, vertical = 20.dp)
                         .shadow(20.dp, shape = RoundedCornerShape(4.dp))
                         .padding(horizontal = 12.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White, fontSize = 25.sp)
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color.White,
+                        fontSize = 25.sp
+                    )
                 )
             }
         }
@@ -135,31 +138,40 @@ fun Buttons(navController: NavHostController, context: Context, text: String) {
         Button(
             onClick = { navController.navigate("about_screen") },
             modifier = Modifier
-                .height(70.dp).weight(1f), // Fill available space
+                .height(70.dp)
+                .weight(1f), // Fill available space
             shape = customButtonShape,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF79256))
         ) {
             Text(
                 text = "About",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
 
                 )
         }
         Button(
             onClick = { connect(navController, context, text) },
             modifier = Modifier
-                .height(70.dp).weight(1f), // Fill available space
+                .height(70.dp)
+                .weight(1f), // Fill available space
             shape = customButtonShape,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007bb8))
         ) {
             Text(
                 text = "Go",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
 
                 )
         }
     }
 }
+
 @Composable
 fun HeaderText() {
     Text(
@@ -169,11 +181,17 @@ fun HeaderText() {
         ),
         color = Color(0xFFF79256),
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(top = 50.dp, bottom = 0.dp).padding(horizontal = 15.dp)
+        modifier = Modifier
+            .padding(top = 50.dp, bottom = 0.dp)
+            .padding(horizontal = 15.dp)
     )
 }
 
-fun connect(navController: NavHostController, context: android.content.Context, currentTextFieldValue: String) {
+fun connect(
+    navController: NavHostController,
+    context: android.content.Context,
+    currentTextFieldValue: String
+) {
     GlobalScope.launch(Dispatchers.IO) {
         val ipAddress = currentTextFieldValue.trim()
         val port = 1234
@@ -184,7 +202,7 @@ fun connect(navController: NavHostController, context: android.content.Context, 
             val inputFromServer = DataInputStream(socket.getInputStream())
             val response = inputFromServer.readUTF()
             Log.d("response", "response: ${response}")
-            if(response == "Success") {
+            if (response == "Success") {
                 GlobalScope.launch(Dispatchers.Main) {
                     navController.navigate("another_Screen?text=$ipAddress")
                 }

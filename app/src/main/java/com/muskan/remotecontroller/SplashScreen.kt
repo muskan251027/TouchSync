@@ -112,7 +112,9 @@ fun SplashScreen(navController: NavHostController) {
             style = MaterialTheme.typography.bodyLarge.copy(fontStyle = FontStyle.Italic),
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 16.dp, bottom = 0.dp).padding(horizontal = 15.dp)
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 0.dp)
+                .padding(horizontal = 15.dp)
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -138,7 +140,11 @@ fun SplashScreen(navController: NavHostController) {
                     Text(
                         "Get started",
                         style = MaterialTheme.typography.bodyLarge
-                            .copy(fontStyle = FontStyle.Italic, fontWeight = FontWeight.Bold, color = Color.White),
+                            .copy(
+                                fontStyle = FontStyle.Italic,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                     Icon(

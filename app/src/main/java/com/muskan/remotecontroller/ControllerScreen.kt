@@ -94,7 +94,7 @@ fun SecondScreen(navController: NavHostController, text: String) {
                 onClick = {
                     provideVibration(vibrator)
                     confirmBackDialog = true
-                          },
+                },
                 modifier = Modifier
                     .height(70.dp)
                     .weight(0.5f), // Fill available space
@@ -131,8 +131,10 @@ fun SecondScreen(navController: NavHostController, text: String) {
             }
 
             Button(
-                onClick = { provideVibration(vibrator)
-                    showDialog = true },
+                onClick = {
+                    provideVibration(vibrator)
+                    showDialog = true
+                },
                 modifier = Modifier
                     .height(70.dp)
                     .weight(0.5f), // Fill available space
@@ -177,7 +179,11 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1dacd6
+                                    )
+                                )
                             ) {
                                 Text("Desktop", modifier = Modifier.padding(10.dp))
                             }
@@ -192,7 +198,11 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1dacd6
+                                    )
+                                )
                             ) {
                                 Text("Terminal", modifier = Modifier.padding(10.dp))
                             }
@@ -207,7 +217,11 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1dacd6
+                                    )
+                                )
                             ) {
                                 Text("Notes", modifier = Modifier.padding(10.dp))
                             }
@@ -222,7 +236,11 @@ fun SecondScreen(navController: NavHostController, text: String) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1dacd6
+                                    )
+                                )
                             ) {
                                 Text("Calculator", modifier = Modifier.padding(10.dp))
                             }
@@ -283,13 +301,15 @@ fun SecondScreen(navController: NavHostController, text: String) {
             }
 
             Button(
-                onClick = { provideVibration(vibrator)
-                    showKeyboard(context, ipAddress, vibrator) },
+                onClick = {
+                    provideVibration(vibrator)
+                    showKeyboard(context, ipAddress, vibrator)
+                },
                 modifier = Modifier
                     .height(70.dp) // Fixed height for all buttons
                     .weight(1f), // Fill available space
                 shape = customButtonShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6 ))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1dacd6))
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.keyboard_icon), // Replace "your_image" with your image resource
@@ -347,8 +367,10 @@ fun SecondScreen(navController: NavHostController, text: String) {
             ) {
                 // Left click button
                 Button(
-                    onClick = {provideVibration(vibrator)
-                        leftClick(ipAddress) },
+                    onClick = {
+                        provideVibration(vibrator)
+                        leftClick(ipAddress)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -368,8 +390,10 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         .fillMaxHeight(),
                 ) {
                     Button(
-                        onClick = { provideVibration(vibrator)
-                            scrollUp(ipAddress) },
+                        onClick = {
+                            provideVibration(vibrator)
+                            scrollUp(ipAddress)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(IntrinsicSize.Max)
@@ -380,8 +404,10 @@ fun SecondScreen(navController: NavHostController, text: String) {
                         Text("Scroll Up")
                     }
                     Button(
-                        onClick = { provideVibration(vibrator)
-                            scrollDown(ipAddress) },
+                        onClick = {
+                            provideVibration(vibrator)
+                            scrollDown(ipAddress)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(IntrinsicSize.Max)
@@ -395,8 +421,10 @@ fun SecondScreen(navController: NavHostController, text: String) {
 
                 // Right click button
                 Button(
-                    onClick = { provideVibration(vibrator)
-                        rightClick(ipAddress) },
+                    onClick = {
+                        provideVibration(vibrator)
+                        rightClick(ipAddress)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -536,8 +564,8 @@ fun TouchView(onTouch: (x: Float, y: Float) -> Unit, ipAddress: String) {
                             // Reset the multi-touch flag when no multi-touch is occurring
                             isMultiTouchOngoing = false
                         }
-                        }
                     }
+                }
 
             }
     ) {
@@ -617,6 +645,7 @@ fun longPress(ipAddress: String) {
     }
 
 }
+
 fun twoFingerTouch(ipAddress: String) {
     //Log.d("Inside Function twoFingerTouch", "Inside Function twoFingerTouch")
     val ipAddress = ipAddress // Replace with your server's IP address
@@ -638,6 +667,7 @@ fun twoFingerTouch(ipAddress: String) {
     }
 
 }
+
 fun provideVibration(vibrator: Vibrator) {
     // Vibration duration in milliseconds
     val duration = 50L // Adjust this value as needed
@@ -650,6 +680,7 @@ fun provideVibration(vibrator: Vibrator) {
         Log.d("VibrationOnTouchView", "Device does not have a vibrator")
     }
 }
+
 fun provideVibrationLong(vibrator: Vibrator) {
     // Vibration duration in milliseconds
     val duration = 200L // Adjust this value as needed
@@ -746,7 +777,7 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
             Log.d("On before", before.toString())
             Log.d("On count", count.toString())
 
-           // Log.d("Text Changed1", s.toString()) // entire string
+            // Log.d("Text Changed1", s.toString()) // entire string
             //Log.d("Text Changed2", s?.lastOrNull().toString()) // last character
             var unicodeval = s?.lastOrNull()?.toInt()?.toString(16)?.toUpperCase() // unicode
             //Log.d("Text Changed3", "\\u$unicodeval")
@@ -757,23 +788,23 @@ private fun showKeyboard(context: android.content.Context, ipAddress: String, vi
 
                 isModifyingText = true;
 
-if (before == 1) {
-    // Backspace pressed
-    //Log.d("Text Changed5", "Backspace pressed")
-    GlobalScope.launch(Dispatchers.IO) {
-        val ipAddress = ipAddress
-        val port = 1234
-        try {
-            val socket = Socket(ipAddress, port)
-            val outToServer = DataOutputStream(socket.getOutputStream())
-            outToServer.writeUTF("6")
-            outToServer.writeUTF("backspace")
-            socket.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}
+                if (before == 1) {
+                    // Backspace pressed
+                    //Log.d("Text Changed5", "Backspace pressed")
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val ipAddress = ipAddress
+                        val port = 1234
+                        try {
+                            val socket = Socket(ipAddress, port)
+                            val outToServer = DataOutputStream(socket.getOutputStream())
+                            outToServer.writeUTF("6")
+                            outToServer.writeUTF("backspace")
+                            socket.close()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
 
                 if (before == 2) {
                     GlobalScope.launch(Dispatchers.IO) {
@@ -828,7 +859,7 @@ if (before == 1) {
                     }
 
                 }
-            }else {
+            } else {
 
                 //isModifyingText = true
                 GlobalScope.launch(Dispatchers.IO) {
@@ -845,7 +876,6 @@ if (before == 1) {
                         e.printStackTrace()
                     }
                 }
-
 
 
             }
